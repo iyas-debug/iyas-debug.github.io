@@ -1,0 +1,1011 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KalkulatorIyas.com</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1e1e2f;
+            color: white;
+            transition: 0.3s;
+            padding: 20px;
+        }
+
+        body.light {
+            background: #f1f1f1;
+            color: #222;
+        }
+
+        .container {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .calculator {
+            width: 350px;
+            padding: 20px;
+            border-radius: 20px;
+            background: #292943;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        body.light .calculator {
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .top h1 {
+            font-size: 22px;
+        }
+
+        .website-name {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        #themeButton {
+            border: none;
+            background: transparent;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .display {
+            width: 100%;
+            height: 90px;
+            border: none;
+            outline: none;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: right;
+            font-size: 36px;
+            background: #171725;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        body.light .display {
+            background: #eeeeee;
+            color: #222;
+        }
+
+        .memory {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .memory button {
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #41415f;
+            color: white;
+            font-size: 14px;
+        }
+
+        body.light .memory button {
+            background: #ddd;
+            color: #222;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            height: 60px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            background: #3b3b58;
+            color: white;
+            transition: 0.15s;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        body.light .buttons button {
+            background: #e2e2e2;
+            color: #222;
+        }
+
+        .operator {
+            background: #ff9500 !important;
+            color: white !important;
+        }
+
+        .function {
+            background: #666680 !important;
+            color: white !important;
+        }
+
+        .equal {
+            background: #28a745 !important;
+            color: white !important;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .history {
+            width: 280px;
+            min-height: 300px;
+            max-height: 520px;
+            overflow-y: auto;
+            padding: 20px;
+            border-radius: 20px;
+            background: #292943;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light .history {
+            background: white;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-header h2 {
+            font-size: 20px;
+        }
+
+        #clearHistory {
+            border: none;
+            background: #dc3545;
+            color: white;
+            padding: 7px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .history-item {
+            padding: 12px 5px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .history-expression {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .history-result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .empty-history {
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 750px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .history {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .calculator,
+            .history {
+                width: 100%;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            button {
+                height: 55px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- KALKULATOR -->
+        <div class="calculator">
+
+            <div class="top">
+
+                <div>
+                    <h1>🧮 KalkulatorIyas.com</h1>
+                    <p class="website-name">
+                        www.kalkulatoriyas.com
+                    </p>
+                </div>
+
+                <button id="themeButton">🌙</button>
+
+            </div>
+
+
+            <!-- DISPLAY -->
+
+            <input
+                type="text"
+                id="display"
+                class="display"
+                value="0"
+                readonly
+            >
+
+
+            <!-- MEMORY -->
+
+            <div class="memory">
+
+                <button onclick="memoryClear()">MC</button>
+
+                <button onclick="memoryRecall()">MR</button>
+
+                <button onclick="memoryAdd()">M+</button>
+
+                <button onclick="memorySubtract()">M-</button>
+
+            </div>
+
+
+            <!-- TOMBOL -->
+
+            <div class="buttons">
+
+                <button
+                    class="function"
+                    onclick="clearDisplay()">
+                    C
+                </button>
+
+                <button
+                    class="function"
+                    onclick="backspace()">
+                    ⌫
+                </button>
+
+                <button
+                    class="function"
+                    onclick="percentage()">
+                    %
+                </button>
+
+                <button
+                    class="operator"
+                    onclick="chooseOperator('/')">
+                    ÷
+                </button>
+
+
+                <button onclick="inputNumber('7')">
+                    7
+                </button>
+
+                <button onclick="inputNumber('8')">
+                    8
+                </button>
+
+                <button onclick="inputNumber('9')">
+                    9
+                </button>
+
+                <button
+                    class="operator"
+                    onclick="chooseOperator('*')">
+                    ×
+                </button>
+
+
+                <button onclick="inputNumber('4')">
+                    4
+                </button>
+
+                <button onclick="inputNumber('5')">
+                    5
+                </button>
+
+                <button onclick="inputNumber('6')">
+                    6
+                </button>
+
+                <button
+                    class="operator"
+                    onclick="chooseOperator('-')">
+                    −
+                </button>
+
+
+                <button onclick="inputNumber('1')">
+                    1
+                </button>
+
+                <button onclick="inputNumber('2')">
+                    2
+                </button>
+
+                <button onclick="inputNumber('3')">
+                    3
+                </button>
+
+                <button
+                    class="operator"
+                    onclick="chooseOperator('+')">
+                    +
+                </button>
+
+
+                <button
+                    class="function"
+                    onclick="toggleSign()">
+                    +/-
+                </button>
+
+                <button
+                    class="zero"
+                    onclick="inputNumber('0')">
+                    0
+                </button>
+
+                <button onclick="inputDecimal()">
+                    .
+                </button>
+
+
+                <button
+                    class="equal"
+                    onclick="calculate()">
+                    =
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIWAYAT -->
+
+        <div class="history">
+
+            <div class="history-header">
+
+                <h2>📜 Riwayat</h2>
+
+                <button id="clearHistory">
+                    Hapus
+                </button>
+
+            </div>
+
+            <div id="historyList">
+
+                <div class="empty-history">
+                    Belum ada perhitungan
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // ====================================
+        // VARIABLE
+        // ====================================
+
+        const display =
+            document.getElementById("display");
+
+        const historyList =
+            document.getElementById("historyList");
+
+        const themeButton =
+            document.getElementById("themeButton");
+
+        const clearHistoryButton =
+            document.getElementById("clearHistory");
+
+
+        let firstNumber = null;
+
+        let operator = null;
+
+        let waitingForSecondNumber = false;
+
+        let memory = 0;
+
+        let history = [];
+
+
+        // ====================================
+        // INPUT ANGKA
+        // ====================================
+
+        function inputNumber(number) {
+
+            if (waitingForSecondNumber) {
+
+                display.value = number;
+
+                waitingForSecondNumber = false;
+
+            }
+
+            else if (display.value === "0") {
+
+                display.value = number;
+
+            }
+
+            else {
+
+                display.value += number;
+
+            }
+
+        }
+
+
+        // ====================================
+        // DESIMAL
+        // ====================================
+
+        function inputDecimal() {
+
+            if (waitingForSecondNumber) {
+
+                display.value = "0.";
+
+                waitingForSecondNumber = false;
+
+                return;
+            }
+
+            if (!display.value.includes(".")) {
+
+                display.value += ".";
+
+            }
+
+        }
+
+
+        // ====================================
+        // OPERATOR
+        // ====================================
+
+        function chooseOperator(selectedOperator) {
+
+            if (display.value === "Error") {
+                clearDisplay();
+                return;
+            }
+
+            if (
+                operator !== null &&
+                !waitingForSecondNumber
+            ) {
+
+                calculate();
+
+            }
+
+            firstNumber =
+                parseFloat(display.value);
+
+            operator =
+                selectedOperator;
+
+            waitingForSecondNumber = true;
+
+        }
+
+
+        // ====================================
+        // HITUNG
+        // ====================================
+
+        function calculate() {
+
+            if (
+                operator === null ||
+                firstNumber === null
+            ) {
+
+                return;
+
+            }
+
+
+            const secondNumber =
+                parseFloat(display.value);
+
+
+            let result;
+
+
+            if (operator === "+") {
+
+                result =
+                    firstNumber + secondNumber;
+
+            }
+
+            else if (operator === "-") {
+
+                result =
+                    firstNumber - secondNumber;
+
+            }
+
+            else if (operator === "*") {
+
+                result =
+                    firstNumber * secondNumber;
+
+            }
+
+            else if (operator === "/") {
+
+                if (secondNumber === 0) {
+
+                    display.value = "Error";
+
+                    firstNumber = null;
+
+                    operator = null;
+
+                    return;
+
+                }
+
+                result =
+                    firstNumber / secondNumber;
+
+            }
+
+
+            result =
+                Number(result.toFixed(10));
+
+
+            const expression =
+                `${firstNumber} ${getOperatorSymbol(operator)} ${secondNumber}`;
+
+
+            display.value = result;
+
+
+            addHistory(
+                expression,
+                result
+            );
+
+
+            firstNumber = result;
+
+            operator = null;
+
+            waitingForSecondNumber = true;
+
+        }
+
+
+        // ====================================
+        // SIMBOL OPERATOR
+        // ====================================
+
+        function getOperatorSymbol(operator) {
+
+            if (operator === "+")
+                return "+";
+
+            if (operator === "-")
+                return "−";
+
+            if (operator === "*")
+                return "×";
+
+            if (operator === "/")
+                return "÷";
+
+            return operator;
+
+        }
+
+
+        // ====================================
+        // CLEAR
+        // ====================================
+
+        function clearDisplay() {
+
+            display.value = "0";
+
+            firstNumber = null;
+
+            operator = null;
+
+            waitingForSecondNumber = false;
+
+        }
+
+
+        // ====================================
+        // BACKSPACE
+        // ====================================
+
+        function backspace() {
+
+            if (
+                display.value === "Error" ||
+                display.value.length === 1
+            ) {
+
+                display.value = "0";
+
+                return;
+
+            }
+
+
+            display.value =
+                display.value.slice(0, -1);
+
+        }
+
+
+        // ====================================
+        // PERSEN
+        // ====================================
+
+        function percentage() {
+
+            const number =
+                parseFloat(display.value);
+
+            display.value =
+                number / 100;
+
+        }
+
+
+        // ====================================
+        // PLUS / MINUS
+        // ====================================
+
+        function toggleSign() {
+
+            if (display.value === "0") {
+
+                return;
+
+            }
+
+
+            display.value =
+                String(
+                    parseFloat(display.value) * -1
+                );
+
+        }
+
+
+        // ====================================
+        // MEMORY CLEAR
+        // ====================================
+
+        function memoryClear() {
+
+            memory = 0;
+
+        }
+
+
+        // ====================================
+        // MEMORY RECALL
+        // ====================================
+
+        function memoryRecall() {
+
+            display.value = memory;
+
+        }
+
+
+        // ====================================
+        // MEMORY PLUS
+        // ====================================
+
+        function memoryAdd() {
+
+            memory +=
+                parseFloat(display.value);
+
+        }
+
+
+        // ====================================
+        // MEMORY MINUS
+        // ====================================
+
+        function memorySubtract() {
+
+            memory -=
+                parseFloat(display.value);
+
+        }
+
+
+        // ====================================
+        // HISTORY
+        // ====================================
+
+        function addHistory(
+            expression,
+            result
+        ) {
+
+            history.unshift({
+
+                expression: expression,
+
+                result: result
+
+            });
+
+
+            if (history.length > 20) {
+
+                history.pop();
+
+            }
+
+
+            renderHistory();
+
+        }
+
+
+        // ====================================
+        // TAMPILKAN HISTORY
+        // ====================================
+
+        function renderHistory() {
+
+            if (history.length === 0) {
+
+                historyList.innerHTML = `
+                    <div class="empty-history">
+                        Belum ada perhitungan
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            historyList.innerHTML = "";
+
+
+            history.forEach((item) => {
+
+                const historyItem =
+                    document.createElement("div");
+
+
+                historyItem.className =
+                    "history-item";
+
+
+                historyItem.innerHTML = `
+
+                    <div class="history-expression">
+                        ${item.expression}
+                    </div>
+
+                    <div class="history-result">
+                        = ${item.result}
+                    </div>
+
+                `;
+
+
+                historyItem.onclick =
+                    function () {
+
+                        display.value =
+                            item.result;
+
+                    };
+
+
+                historyList.appendChild(
+                    historyItem
+                );
+
+            });
+
+        }
+
+
+        // ====================================
+        // HAPUS HISTORY
+        // ====================================
+
+        clearHistoryButton.onclick =
+            function () {
+
+                history = [];
+
+                renderHistory();
+
+            };
+
+
+        // ====================================
+        // DARK / LIGHT MODE
+        // ====================================
+
+        themeButton.onclick =
+            function () {
+
+                document.body.classList.toggle(
+                    "light"
+                );
+
+
+                if (
+                    document.body.classList.contains(
+                        "light"
+                    )
+                ) {
+
+                    themeButton.textContent = "☀️";
+
+                }
+
+                else {
+
+                    themeButton.textContent = "🌙";
+
+                }
+
+            };
+
+
+        // ====================================
+        // KEYBOARD
+        // ====================================
+
+        document.addEventListener(
+            "keydown",
+            function(event) {
+
+                const key = event.key;
+
+
+                if (
+                    key >= "0" &&
+                    key <= "9"
+                ) {
+
+                    inputNumber(key);
+
+                }
+
+
+                else if (key === ".") {
+
+                    inputDecimal();
+
+                }
+
+
+                else if (
+                    key === "+" ||
+                    key === "-" ||
+                    key === "*" ||
+                    key === "/"
+                ) {
+
+                    chooseOperator(key);
+
+                }
+
+
+                else if (
+                    key === "Enter" ||
+                    key === "="
+                ) {
+
+                    calculate();
+
+                }
+
+
+                else if (key === "Backspace") {
+
+                    backspace();
+
+                }
+
+
+                else if (key === "Escape") {
+
+                    clearDisplay();
+
+                }
+
+
+                else if (key === "%") {
+
+                    percentage();
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>
+```
