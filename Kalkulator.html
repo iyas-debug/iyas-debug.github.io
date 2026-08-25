@@ -1,0 +1,3928 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="description"
+  content="CalculaX - Futuristic Scientific Calculator"
+/>
+
+<title>CalculaX | Futuristic Calculator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+  rel="stylesheet"
+>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #050711;
+  --bg2: #0a0e1d;
+
+  --panel: rgba(15, 20, 40, .78);
+  --panel2: rgba(21, 27, 52, .92);
+
+  --border: rgba(255,255,255,.08);
+
+  --text: #f5f7ff;
+  --muted: #8992ad;
+  --muted2: #555e7a;
+
+  --cyan: #55e7ff;
+  --blue: #4c7dff;
+  --purple: #8a63ff;
+  --pink: #ff55bd;
+
+  --green: #43f2a1;
+  --red: #ff5575;
+  --orange: #ff9c3b;
+
+  --shadow:
+    0 30px 100px rgba(0,0,0,.45);
+
+  --radius: 28px;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+
+  color: var(--text);
+
+  font-family:
+    "Inter",
+    system-ui,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(85,231,255,.12),
+      transparent 25%
+    ),
+
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(138,99,255,.14),
+      transparent 28%
+    ),
+
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(255,85,189,.08),
+      transparent 30%
+    ),
+
+    var(--bg);
+
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   BACKGROUND GRID
+========================================================= */
+
+.grid {
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 50px 50px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent
+    );
+
+  z-index: -5;
+}
+
+/* =========================================================
+   GLOW ORBS
+========================================================= */
+
+.orb {
+  position: fixed;
+
+  width: 350px;
+  height: 350px;
+
+  border-radius: 50%;
+
+  filter: blur(100px);
+
+  pointer-events: none;
+
+  opacity: .12;
+
+  z-index: -4;
+}
+
+.orb1 {
+  background: var(--cyan);
+
+  left: -180px;
+  top: 20%;
+}
+
+.orb2 {
+  background: var(--purple);
+
+  right: -180px;
+  bottom: 10%;
+}
+
+.orb3 {
+  background: var(--pink);
+
+  left: 40%;
+  top: -200px;
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+#particles {
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: -3;
+}
+
+.particle {
+  position: absolute;
+
+  width: 2px;
+  height: 2px;
+
+  border-radius: 50%;
+
+  background: var(--cyan);
+
+  box-shadow:
+    0 0 10px var(--cyan);
+
+  animation:
+    floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+
+  from {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: .8;
+  }
+
+  85% {
+    opacity: .8;
+  }
+
+  to {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+  width: min(1400px, calc(100% - 40px));
+
+  margin: auto;
+
+  height: 90px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  text-decoration: none;
+
+  color: white;
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  border:
+    1px solid rgba(85,231,255,.3);
+
+  background:
+    rgba(85,231,255,.07);
+
+  color: var(--cyan);
+
+  font-size: 25px;
+
+  box-shadow:
+    0 0 30px rgba(85,231,255,.08);
+
+  animation: logoPulse 3s infinite;
+}
+
+@keyframes logoPulse {
+
+  50% {
+    box-shadow:
+      0 0 40px rgba(85,231,255,.2);
+  }
+
+}
+
+.logo-name {
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 21px;
+
+  font-weight: 700;
+}
+
+.logo-name span {
+  color: var(--cyan);
+}
+
+.logo-sub {
+  margin-top: 3px;
+
+  font-size: 8px;
+
+  letter-spacing: 2px;
+
+  color: var(--muted2);
+
+  font-weight: 800;
+}
+
+.header-actions {
+  display: flex;
+
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 13px;
+
+  border:
+    1px solid var(--border);
+
+  background:
+    rgba(255,255,255,.035);
+
+  color: var(--muted);
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.icon-btn:hover {
+  color: var(--cyan);
+
+  border-color:
+    rgba(85,231,255,.3);
+
+  background:
+    rgba(85,231,255,.06);
+
+  transform:
+    translateY(-2px);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.container {
+  width: min(1400px, calc(100% - 40px));
+
+  margin: auto;
+
+  padding:
+    35px 0 80px;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+  min-height: 250px;
+
+  padding: 42px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 30px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  background:
+    linear-gradient(
+      130deg,
+      rgba(20,27,54,.9),
+      rgba(8,12,26,.75)
+    );
+
+  box-shadow:
+    var(--shadow);
+}
+
+.hero::before {
+  content: "";
+
+  position: absolute;
+
+  width: 400px;
+  height: 400px;
+
+  right: 5%;
+  top: -260px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(85,231,255,.12);
+
+  box-shadow:
+    0 0 0 45px
+    rgba(85,231,255,.025),
+
+    0 0 0 90px
+    rgba(85,231,255,.015);
+}
+
+.status {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding:
+    7px 11px;
+
+  border-radius: 100px;
+
+  color: #86f6bf;
+
+  background:
+    rgba(67,242,161,.06);
+
+  border:
+    1px solid
+    rgba(67,242,161,.16);
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+.status i {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background:
+    var(--green);
+
+  box-shadow:
+    0 0 12px var(--green);
+
+  animation:
+    statusPulse 1.5s infinite;
+}
+
+@keyframes statusPulse {
+
+  50% {
+    opacity: .3;
+    transform: scale(.7);
+  }
+
+}
+
+.hero h1 {
+  margin-top: 16px;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size:
+    clamp(42px, 6vw, 72px);
+
+  line-height: .92;
+
+  letter-spacing: -4px;
+}
+
+.hero h1 span {
+  background:
+    linear-gradient(
+      100deg,
+      var(--cyan),
+      var(--purple),
+      var(--pink)
+    );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  color: transparent;
+}
+
+.hero p {
+  max-width: 600px;
+
+  margin-top: 14px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+.stats {
+  min-width: 330px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap: 1px;
+
+  overflow: hidden;
+
+  border-radius: 18px;
+
+  background: var(--border);
+}
+
+.stat {
+  padding: 20px 12px;
+
+  text-align: center;
+
+  background:
+    rgba(5,8,18,.6);
+}
+
+.stat b {
+  display: block;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 25px;
+}
+
+.stat span {
+  display: block;
+
+  margin-top: 5px;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.4px;
+
+  color: var(--muted2);
+}
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.workspace {
+  margin-top: 22px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(550px, 800px)
+    minmax(300px, 1fr);
+
+  gap: 22px;
+
+  align-items: start;
+}
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+.calculator {
+  padding: 25px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: var(--radius);
+
+  border:
+    1px solid var(--border);
+
+  background:
+    var(--panel);
+
+  backdrop-filter:
+    blur(25px);
+
+  box-shadow:
+    var(--shadow);
+}
+
+.calculator::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 20%;
+
+  width: 60%;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--cyan),
+      transparent
+    );
+
+  opacity: .6;
+}
+
+/* =========================================================
+   CALC HEADER
+========================================================= */
+
+.calc-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  color: var(--muted2);
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+}
+
+.calc-title {
+  margin-top: 4px;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 19px;
+}
+
+.mode {
+  display: flex;
+
+  gap: 3px;
+
+  padding: 4px;
+
+  border-radius: 12px;
+
+  background:
+    rgba(0,0,0,.18);
+
+  border:
+    1px solid var(--border);
+}
+
+.mode button {
+  padding:
+    8px 12px;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  cursor: pointer;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.mode button.active {
+  color: white;
+
+  background:
+    rgba(85,231,255,.1);
+
+  box-shadow:
+    inset 0 0 20px
+    rgba(85,231,255,.04);
+}
+
+/* =========================================================
+   DISPLAY
+========================================================= */
+
+.display {
+  min-height: 155px;
+
+  padding:
+    20px 23px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: flex-end;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 21px;
+
+  border:
+    1px solid rgba(255,255,255,.07);
+
+  background:
+    linear-gradient(
+      145deg,
+      #050711,
+      #10152b
+    );
+
+  box-shadow:
+    inset 0 0 60px
+    rgba(0,0,0,.3);
+}
+
+.display::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 0;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--cyan),
+      transparent
+    );
+}
+
+.display-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  color: var(--muted2);
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.angle {
+  color: var(--cyan);
+}
+
+.screen {
+  margin-top: 9px;
+
+  min-height: 62px;
+
+  text-align: right;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size:
+    clamp(38px, 6vw, 62px);
+
+  font-weight: 600;
+
+  letter-spacing: -3px;
+
+  text-shadow:
+    0 0 30px
+    rgba(85,231,255,.12);
+}
+
+.caret {
+  position: absolute;
+
+  right: 22px;
+  bottom: 20px;
+
+  width: 2px;
+  height: 45px;
+
+  background:
+    var(--cyan);
+
+  animation:
+    blink 1s infinite;
+}
+
+@keyframes blink {
+
+  50% {
+    opacity: 0;
+  }
+
+}
+
+/* =========================================================
+   MEMORY
+========================================================= */
+
+.memory {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4,1fr) 1.5fr;
+
+  gap: 8px;
+
+  margin-top: 11px;
+}
+
+.memory button {
+  height: 37px;
+
+  border-radius: 10px;
+
+  border:
+    1px solid var(--border);
+
+  background:
+    rgba(255,255,255,.035);
+
+  color: #9ca5c0;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: .15s;
+}
+
+.memory button:hover {
+  color: var(--cyan);
+
+  border-color:
+    rgba(85,231,255,.3);
+}
+
+.memory .memory-status {
+  color: var(--muted2);
+
+  cursor: default;
+}
+
+/* =========================================================
+   SCIENTIFIC
+========================================================= */
+
+.scientific {
+  display: none;
+
+  grid-template-columns:
+    repeat(6,1fr);
+
+  gap: 8px;
+
+  margin-top: 9px;
+}
+
+.scientific.show {
+  display: grid;
+}
+
+.scientific button {
+  height: 39px;
+
+  border-radius: 10px;
+
+  border:
+    1px solid
+    rgba(138,99,255,.18);
+
+  background:
+    rgba(138,99,255,.08);
+
+  color:
+    #b9adff;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: .15s;
+}
+
+.scientific button:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(138,99,255,.15);
+
+  border-color:
+    rgba(138,99,255,.4);
+}
+
+/* =========================================================
+   KEYPAD
+========================================================= */
+
+.keypad {
+  margin-top: 10px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap: 10px;
+}
+
+.key {
+  min-height: 68px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 17px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.055);
+
+  background:
+    linear-gradient(
+      145deg,
+      #29304f,
+      #1c223d
+    );
+
+  color: #edf0fa;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.035),
+
+    0 8px 20px
+    rgba(0,0,0,.15);
+
+  transition:
+    transform .1s,
+    box-shadow .1s,
+    border .1s;
+}
+
+.key::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255,255,255,.1),
+      transparent 50%
+    );
+
+  pointer-events: none;
+}
+
+.key:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(255,255,255,.13);
+
+  box-shadow:
+    0 12px 30px
+    rgba(0,0,0,.25);
+}
+
+.key:active {
+  transform:
+    translateY(2px)
+    scale(.97);
+}
+
+.danger {
+  color: #ff9aae;
+
+  background:
+    linear-gradient(
+      145deg,
+      #632c43,
+      #401e34
+    );
+
+  border-color:
+    rgba(255,85,117,.15);
+}
+
+.muted {
+  color: #cbd1e2;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3c435f,
+      #2b324e
+    );
+}
+
+.operator {
+  color: #e0d9ff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #7657e6,
+      #4c399d
+    );
+
+  box-shadow:
+    0 10px 28px
+    rgba(100,75,210,.18);
+}
+
+.equals {
+  color: #06140e;
+
+  background:
+    linear-gradient(
+      145deg,
+      #55f3ad,
+      #25c97c
+    );
+
+  box-shadow:
+    0 10px 28px
+    rgba(37,201,124,.2);
+}
+
+.zero {
+  grid-column:
+    span 2;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.calc-footer {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 13px;
+
+  color: var(--muted2);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: .6px;
+}
+
+.calc-footer button {
+  border: 0;
+
+  background: transparent;
+
+  color: var(--cyan);
+
+  cursor: pointer;
+
+  font-size: inherit;
+
+  font-weight: inherit;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+  display: grid;
+
+  gap: 22px;
+}
+
+.panel {
+  padding: 20px;
+
+  border-radius: 21px;
+
+  border:
+    1px solid var(--border);
+
+  background:
+    var(--panel);
+
+  backdrop-filter:
+    blur(22px);
+
+  box-shadow:
+    var(--shadow);
+}
+
+.panel-head {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+}
+
+.panel-title {
+  margin-top: 4px;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 16px;
+}
+
+.clear {
+  padding: 8px 10px;
+
+  border-radius: 8px;
+
+  border: 0;
+
+  background:
+    rgba(255,85,117,.09);
+
+  color:
+    #ff8299;
+
+  cursor: pointer;
+
+  font-size: 8px;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history {
+  min-height: 330px;
+
+  max-height: 430px;
+
+  overflow-y: auto;
+}
+
+.history::-webkit-scrollbar {
+  width: 4px;
+}
+
+.history::-webkit-scrollbar-thumb {
+  background:
+    rgba(255,255,255,.1);
+
+  border-radius: 20px;
+}
+
+.empty {
+  min-height: 280px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  gap: 7px;
+
+  color: var(--muted2);
+}
+
+.empty-icon {
+  width: 50px;
+  height: 50px;
+
+  display: grid;
+  place-items: center;
+
+  margin-bottom: 8px;
+
+  border-radius: 15px;
+
+  border:
+    1px solid var(--border);
+
+  background:
+    rgba(85,231,255,.04);
+
+  color: var(--cyan);
+
+  font-size: 23px;
+}
+
+.empty strong {
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.empty span {
+  max-width: 200px;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+}
+
+.history-item {
+  padding: 13px;
+
+  margin-bottom: 8px;
+
+  border-radius: 13px;
+
+  border:
+    1px solid transparent;
+
+  background:
+    rgba(255,255,255,.025);
+
+  cursor: pointer;
+
+  transition: .18s;
+}
+
+.history-item:hover {
+  transform:
+    translateX(-3px);
+
+  background:
+    rgba(85,231,255,.045);
+
+  border-color:
+    rgba(85,231,255,.17);
+}
+
+.history-expression {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 9px;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.history-result {
+  display: block;
+
+  margin-top: 4px;
+
+  color: white;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 18px;
+}
+
+.history-time {
+  display: block;
+
+  margin-top: 6px;
+
+  color: var(--muted2);
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 8px;
+}
+
+.quick button {
+  min-height: 58px;
+
+  padding: 10px;
+
+  text-align: left;
+
+  border-radius: 12px;
+
+  border:
+    1px solid var(--border);
+
+  background:
+    rgba(255,255,255,.025);
+
+  color: #aeb7d0;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .18s;
+}
+
+.quick button:hover {
+  color: white;
+
+  border-color:
+    rgba(85,231,255,.25);
+
+  background:
+    rgba(85,231,255,.05);
+}
+
+/* =========================================================
+   SHORTCUTS
+========================================================= */
+
+.shortcuts {
+  display: grid;
+
+  gap: 9px;
+}
+
+.shortcut {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  color: var(--muted);
+
+  font-size: 10px;
+}
+
+kbd {
+  min-width: 30px;
+
+  padding: 5px 7px;
+
+  text-align: center;
+
+  border-radius: 6px;
+
+  border:
+    1px solid rgba(255,255,255,.1);
+
+  background:
+    rgba(255,255,255,.04);
+
+  color: #d4d9e9;
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast {
+  position: fixed;
+
+  right: 20px;
+  bottom: 20px;
+
+  z-index: 100;
+
+  display: grid;
+
+  gap: 8px;
+}
+
+.toast {
+  min-width: 220px;
+
+  padding: 13px 15px;
+
+  border-radius: 12px;
+
+  border:
+    1px solid
+    rgba(85,231,255,.2);
+
+  background:
+    rgba(8,12,26,.95);
+
+  color: #e5ebfb;
+
+  font-size: 10px;
+
+  box-shadow:
+    0 20px 60px
+    rgba(0,0,0,.4);
+
+  animation:
+    toastIn .25s ease;
+}
+
+@keyframes toastIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+dialog {
+  width:
+    min(450px, calc(100% - 30px));
+
+  border: 1px solid var(--border);
+
+  border-radius: 23px;
+
+  background:
+    rgba(11,15,31,.97);
+
+  color: white;
+
+  box-shadow:
+    0 40px 120px
+    rgba(0,0,0,.7);
+
+  padding: 0;
+}
+
+dialog::backdrop {
+  background:
+    rgba(0,0,0,.7);
+
+  backdrop-filter:
+    blur(8px);
+}
+
+.modal {
+  padding: 28px;
+
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+
+  right: 16px;
+  top: 16px;
+
+  width: 35px;
+  height: 35px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  background:
+    rgba(255,255,255,.05);
+
+  color: var(--muted);
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.modal h2 {
+  margin-top: 8px;
+
+  font-family:
+    "Space Grotesk",
+    sans-serif;
+
+  font-size: 27px;
+}
+
+.modal p {
+  margin-top: 6px;
+
+  color: var(--muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+}
+
+.setting {
+  margin-top: 25px;
+}
+
+.setting label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: #dce2f2;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+.colors {
+  display: flex;
+
+  gap: 10px;
+}
+
+.color {
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+
+  border: 3px solid transparent;
+
+  cursor: pointer;
+}
+
+.color.active {
+  border-color: white;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(255,255,255,.15);
+}
+
+.c1 {
+  background: #55e7ff;
+}
+
+.c2 {
+  background: #a78bfa;
+}
+
+.c3 {
+  background: #ff65c3;
+}
+
+.c4 {
+  background: #43f2a1;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1100px) {
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    grid-template-columns:
+      1.2fr .8fr;
+  }
+
+  .sidebar .panel:last-child {
+    grid-column:
+      span 2;
+  }
+
+}
+
+@media(max-width:750px) {
+
+  header,
+  .container {
+    width:
+      calc(100% - 22px);
+  }
+
+  .hero {
+    padding: 28px 22px;
+
+    display: block;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+
+    letter-spacing: -3px;
+  }
+
+  .stats {
+    margin-top: 25px;
+
+    min-width: 0;
+  }
+
+  .calculator {
+    padding: 15px;
+  }
+
+  .calc-header {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .mode {
+    width: 100%;
+  }
+
+  .mode button {
+    flex: 1;
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar .panel:last-child {
+    grid-column: auto;
+  }
+
+}
+
+@media(max-width:480px) {
+
+  header {
+    height: 75px;
+  }
+
+  .logo-sub {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .hero p {
+    font-size: 11px;
+  }
+
+  .display {
+    min-height: 130px;
+  }
+
+  .screen {
+    font-size: 39px;
+  }
+
+  .memory {
+    grid-template-columns:
+      repeat(4,1fr);
+  }
+
+  .memory-status {
+    grid-column:
+      1 / -1;
+  }
+
+  .scientific {
+    grid-template-columns:
+      repeat(4,1fr);
+  }
+
+  .keypad {
+    gap: 7px;
+  }
+
+  .key {
+    min-height: 58px;
+
+    border-radius: 14px;
+
+    font-size: 17px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div class="grid"></div>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div id="particles"></div>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+  <a class="logo" href="#">
+
+    <div class="logo-icon">
+      ⌬
+    </div>
+
+    <div>
+
+      <div class="logo-name">
+        Calcula<span>X</span>
+      </div>
+
+      <div class="logo-sub">
+        NEURAL CALCULATION SYSTEM
+      </div>
+
+    </div>
+
+  </a>
+
+  <div class="header-actions">
+
+    <button
+      class="icon-btn"
+      id="themeButton"
+      title="Theme"
+    >
+      ◐
+    </button>
+
+    <button
+      class="icon-btn"
+      id="soundButton"
+      title="Sound"
+    >
+      ♪
+    </button>
+
+    <button
+      class="icon-btn"
+      id="settingsButton"
+      title="Settings"
+    >
+      ⚙
+    </button>
+
+  </div>
+
+</header>
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="container">
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div>
+
+      <div class="status">
+        <i></i>
+        SYSTEM ONLINE
+      </div>
+
+      <h1>
+        Calculate<br>
+        <span>beyond ordinary.</span>
+      </h1>
+
+      <p>
+        A futuristic calculation interface designed for
+        speed, precision and beautiful mathematics.
+      </p>
+
+    </div>
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <b id="operations">0</b>
+
+        <span>
+          OPERATIONS
+        </span>
+
+      </div>
+
+      <div class="stat">
+
+        <b id="historyCount">0</b>
+
+        <span>
+          HISTORY
+        </span>
+
+      </div>
+
+      <div class="stat">
+
+        <b id="memoryState">0</b>
+
+        <span>
+          MEMORY
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- WORKSPACE -->
+
+  <section class="workspace">
+
+    <!-- CALCULATOR -->
+
+    <div class="calculator">
+
+      <div class="calc-header">
+
+        <div>
+
+          <div class="eyebrow">
+            CALCULATOR // X-01
+          </div>
+
+          <div class="calc-title">
+            Neon Console
+          </div>
+
+        </div>
+
+        <div class="mode">
+
+          <button
+            class="active"
+            data-mode="basic"
+          >
+            BASIC
+          </button>
+
+          <button
+            data-mode="scientific"
+          >
+            SCIENTIFIC
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- DISPLAY -->
+
+      <div class="display">
+
+        <div class="display-top">
+
+          <span id="displayStatus">
+            READY
+          </span>
+
+          <span
+            class="angle"
+            id="angleDisplay"
+          >
+            DEG
+          </span>
+
+        </div>
+
+        <div
+          class="screen"
+          id="screen"
+        >
+          0
+        </div>
+
+        <div class="caret"></div>
+
+      </div>
+
+      <!-- MEMORY -->
+
+      <div class="memory">
+
+        <button data-memory="clear">
+          MC
+        </button>
+
+        <button data-memory="recall">
+          MR
+        </button>
+
+        <button data-memory="add">
+          M+
+        </button>
+
+        <button data-memory="subtract">
+          M−
+        </button>
+
+        <button class="memory-status">
+          M: <span id="memoryValue">0</span>
+        </button>
+
+      </div>
+
+      <!-- SCIENTIFIC -->
+
+      <div
+        class="scientific"
+        id="scientific"
+      >
+
+        <button data-input="sin(">
+          sin
+        </button>
+
+        <button data-input="cos(">
+          cos
+        </button>
+
+        <button data-input="tan(">
+          tan
+        </button>
+
+        <button data-input="log(">
+          log
+        </button>
+
+        <button data-input="ln(">
+          ln
+        </button>
+
+        <button data-input="sqrt(">
+          √
+        </button>
+
+        <button data-input="^2">
+          x²
+        </button>
+
+        <button data-input="^">
+          xʸ
+        </button>
+
+        <button data-input="(">
+          (
+        </button>
+
+        <button data-input=")">
+          )
+        </button>
+
+        <button data-input="pi">
+          π
+        </button>
+
+        <button data-input="e">
+          e
+        </button>
+
+      </div>
+
+      <!-- KEYPAD -->
+
+      <div class="keypad">
+
+        <button
+          class="key danger"
+          data-action="clear"
+        >
+          AC
+        </button>
+
+        <button
+          class="key muted"
+          data-action="backspace"
+        >
+          ⌫
+        </button>
+
+        <button
+          class="key muted"
+          data-action="percent"
+        >
+          %
+        </button>
+
+        <button
+          class="key operator"
+          data-input="/"
+        >
+          ÷
+        </button>
+
+        <button
+          class="key"
+          data-input="7"
+        >
+          7
+        </button>
+
+        <button
+          class="key"
+          data-input="8"
+        >
+          8
+        </button>
+
+        <button
+          class="key"
+          data-input="9"
+        >
+          9
+        </button>
+
+        <button
+          class="key operator"
+          data-input="*"
+        >
+          ×
+        </button>
+
+        <button
+          class="key"
+          data-input="4"
+        >
+          4
+        </button>
+
+        <button
+          class="key"
+          data-input="5"
+        >
+          5
+        </button>
+
+        <button
+          class="key"
+          data-input="6"
+        >
+          6
+        </button>
+
+        <button
+          class="key operator"
+          data-input="-"
+        >
+          −
+        </button>
+
+        <button
+          class="key"
+          data-input="1"
+        >
+          1
+        </button>
+
+        <button
+          class="key"
+          data-input="2"
+        >
+          2
+        </button>
+
+        <button
+          class="key"
+          data-input="3"
+        >
+          3
+        </button>
+
+        <button
+          class="key operator"
+          data-input="+"
+        >
+          +
+        </button>
+
+        <button
+          class="key muted"
+          data-action="sign"
+        >
+          ±
+        </button>
+
+        <button
+          class="key zero"
+          data-input="0"
+        >
+          0
+        </button>
+
+        <button
+          class="key"
+          data-input="."
+        >
+          .
+        </button>
+
+        <button
+          class="key equals"
+          data-action="equals"
+        >
+          =
+        </button>
+
+      </div>
+
+      <!-- FOOTER -->
+
+      <div class="calc-footer">
+
+        <span>
+          ⌨ KEYBOARD ENABLED
+        </span>
+
+        <span>•</span>
+
+        <button id="angleButton">
+          Angle: DEG
+        </button>
+
+        <span>•</span>
+
+        <span>
+          LOCAL CALCULATION
+        </span>
+
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+      <!-- HISTORY -->
+
+      <section class="panel">
+
+        <div class="panel-head">
+
+          <div>
+
+            <div class="eyebrow">
+              LOG // 24H
+            </div>
+
+            <div class="panel-title">
+              Calculation History
+            </div>
+
+          </div>
+
+          <button
+            class="clear"
+            id="clearHistory"
+          >
+            CLEAR
+          </button>
+
+        </div>
+
+        <div
+          class="history"
+          id="history"
+        >
+
+          <div class="empty">
+
+            <div class="empty-icon">
+              ⌁
+            </div>
+
+            <strong>
+              No calculations yet
+            </strong>
+
+            <span>
+              Hasil perhitungan akan muncul
+              di sini.
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- QUICK ACTION -->
+
+      <section class="panel">
+
+        <div class="panel-head">
+
+          <div>
+
+            <div class="eyebrow">
+              SYSTEM
+            </div>
+
+            <div class="panel-title">
+              Quick Actions
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="quick">
+
+          <button data-quick="pi">
+            π Insert Pi
+          </button>
+
+          <button data-quick="sqrt">
+            √ Square Root
+          </button>
+
+          <button data-quick="answer">
+            ↳ Last Answer
+          </button>
+
+          <button data-quick="reset">
+            ⟳ Reset Console
+          </button>
+
+        </div>
+
+      </section>
+
+      <!-- SHORTCUTS -->
+
+      <section class="panel">
+
+        <div class="eyebrow">
+          KEYBOARD SHORTCUTS
+        </div>
+
+        <div class="shortcuts">
+
+          <div class="shortcut">
+
+            <span>
+              Calculate
+            </span>
+
+            <kbd>ENTER</kbd>
+
+          </div>
+
+          <div class="shortcut">
+
+            <span>
+              Clear
+            </span>
+
+            <kbd>ESC</kbd>
+
+          </div>
+
+          <div class="shortcut">
+
+            <span>
+              Delete
+            </span>
+
+            <kbd>⌫</kbd>
+
+          </div>
+
+          <div class="shortcut">
+
+            <span>
+              Scientific
+            </span>
+
+            <kbd>S</kbd>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </aside>
+
+  </section>
+
+</main>
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div id="toast"></div>
+
+<!-- =====================================================
+     SETTINGS
+===================================================== -->
+
+<dialog id="settingsDialog">
+
+  <div class="modal">
+
+    <button
+      class="close-modal"
+      id="closeModal"
+    >
+      ×
+    </button>
+
+    <div class="eyebrow">
+      SYSTEM SETTINGS
+    </div>
+
+    <h2>
+      Customize Console
+    </h2>
+
+    <p>
+      Ubah warna dan tampilan CalculaX
+      sesuai selera kamu.
+    </p>
+
+    <div class="setting">
+
+      <label>
+        ACCENT COLOR
+      </label>
+
+      <div class="colors">
+
+        <button
+          class="color c1 active"
+          data-color="cyan"
+        ></button>
+
+        <button
+          class="color c2"
+          data-color="purple"
+        ></button>
+
+        <button
+          class="color c3"
+          data-color="pink"
+        ></button>
+
+        <button
+          class="color c4"
+          data-color="green"
+        ></button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</dialog>
+
+<script>
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let expression = "";
+
+let memory = Number(
+  localStorage.getItem("calculax_memory") || 0
+);
+
+let historyData = JSON.parse(
+  localStorage.getItem("calculax_history") || "[]"
+);
+
+let operations = Number(
+  localStorage.getItem("calculax_operations") || 0
+);
+
+let lastAnswer = 0;
+
+let angleMode = "DEG";
+
+let soundEnabled =
+  localStorage.getItem("calculax_sound") !== "off";
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const screen =
+  document.getElementById("screen");
+
+const displayStatus =
+  document.getElementById("displayStatus");
+
+const historyBox =
+  document.getElementById("history");
+
+const memoryValue =
+  document.getElementById("memoryValue");
+
+const operationsElement =
+  document.getElementById("operations");
+
+const historyCount =
+  document.getElementById("historyCount");
+
+const memoryState =
+  document.getElementById("memoryState");
+
+const angleDisplay =
+  document.getElementById("angleDisplay");
+
+const angleButton =
+  document.getElementById("angleButton");
+
+const scientific =
+  document.getElementById("scientific");
+
+const toastBox =
+  document.getElementById("toast");
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+const particles =
+  document.getElementById("particles");
+
+for (let i = 0; i < 70; i++) {
+
+  const p =
+    document.createElement("div");
+
+  p.className = "particle";
+
+  p.style.left =
+    Math.random() * 100 + "%";
+
+  p.style.animationDuration =
+    8 + Math.random() * 15 + "s";
+
+  p.style.animationDelay =
+    Math.random() * 10 + "s";
+
+  p.style.opacity =
+    Math.random();
+
+  particles.appendChild(p);
+
+}
+
+/* =========================================================
+   FORMAT
+========================================================= */
+
+function formatNumber(number) {
+
+  if (!Number.isFinite(number)) {
+    return "ERROR";
+  }
+
+  if (
+    Math.abs(number) > 999999999999
+    ||
+    (
+      Math.abs(number) < 0.00000001
+      &&
+      number !== 0
+    )
+  ) {
+
+    return number.toExponential(8);
+
+  }
+
+  return Number(
+    number.toPrecision(12)
+  ).toString();
+
+}
+
+/* =========================================================
+   DISPLAY
+========================================================= */
+
+function updateDisplay() {
+
+  screen.textContent =
+    expression || "0";
+
+  memoryValue.textContent =
+    formatNumber(memory);
+
+  operationsElement.textContent =
+    operations;
+
+  historyCount.textContent =
+    historyData.length;
+
+  memoryState.textContent =
+    memory === 0 ? "0" : "1";
+
+  angleDisplay.textContent =
+    angleMode;
+
+  angleButton.textContent =
+    "Angle: " + angleMode;
+
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function toast(message) {
+
+  const element =
+    document.createElement("div");
+
+  element.className = "toast";
+
+  element.textContent =
+    message;
+
+  toastBox.appendChild(element);
+
+  setTimeout(() => {
+
+    element.remove();
+
+  }, 2200);
+
+}
+
+/* =========================================================
+   SOUND
+========================================================= */
+
+function beep() {
+
+  if (!soundEnabled) {
+    return;
+  }
+
+  try {
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    const ctx =
+      new AudioContext();
+
+    const oscillator =
+      ctx.createOscillator();
+
+    const gain =
+      ctx.createGain();
+
+    oscillator.frequency.value =
+      500;
+
+    gain.gain.value =
+      0.025;
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      ctx.currentTime + .06
+    );
+
+    oscillator.connect(gain);
+
+    gain.connect(ctx.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+      ctx.currentTime + .06
+    );
+
+  } catch {}
+
+}
+
+/* =========================================================
+   CALCULATOR ENGINE
+========================================================= */
+
+function calculate(input) {
+
+  let exp =
+    input.trim();
+
+  exp =
+    exp.replace(/π/g, "Math.PI");
+
+  exp =
+    exp.replace(/\bpi\b/g, "Math.PI");
+
+  exp =
+    exp.replace(/\be\b/g, "Math.E");
+
+  exp =
+    exp.replace(
+      /sqrt\(/g,
+      "Math.sqrt("
+    );
+
+  exp =
+    exp.replace(
+      /log\(/g,
+      "Math.log10("
+    );
+
+  exp =
+    exp.replace(
+      /ln\(/g,
+      "Math.log("
+    );
+
+  exp =
+    exp.replace(
+      /sin\(/g,
+      "SIN("
+    );
+
+  exp =
+    exp.replace(
+      /cos\(/g,
+      "COS("
+    );
+
+  exp =
+    exp.replace(
+      /tan\(/g,
+      "TAN("
+    );
+
+  exp =
+    exp.replace(
+      /\^/g,
+      "**"
+    );
+
+  exp =
+    exp.replace(
+      /SIN\(/g,
+      angleMode === "DEG"
+        ? "Math.sin(Math.PI/180*("
+        : "Math.sin("
+    );
+
+  exp =
+    exp.replace(
+      /COS\(/g,
+      angleMode === "DEG"
+        ? "Math.cos(Math.PI/180*("
+        : "Math.cos("
+    );
+
+  exp =
+    exp.replace(
+      /TAN\(/g,
+      angleMode === "DEG"
+        ? "Math.tan(Math.PI/180*("
+        : "Math.tan("
+    );
+
+  /*
+    Basic security:
+    hanya karakter matematika
+  */
+
+  if (
+    !/^[0-9+\-*/().,\sA-Za-z_*]+$/.test(exp)
+  ) {
+
+    throw new Error(
+      "Invalid expression"
+    );
+
+  }
+
+  /*
+    Hindari akses property
+  */
+
+  if (
+    exp.includes("constructor") ||
+    exp.includes("window") ||
+    exp.includes("document") ||
+    exp.includes("Function") ||
+    exp.includes("eval")
+  ) {
+
+    throw new Error(
+      "Blocked"
+    );
+
+  }
+
+  const result =
+    Function(
+      '"use strict"; return (' +
+      exp +
+      ')'
+    )();
+
+  if (
+    !Number.isFinite(result)
+  ) {
+
+    throw new Error(
+      "Math error"
+    );
+
+  }
+
+  return result;
+
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+function addInput(value) {
+
+  beep();
+
+  /*
+    Decimal
+  */
+
+  if (value === ".") {
+
+    const pieces =
+      expression.split(
+        /[+\-*/()]/
+      );
+
+    const current =
+      pieces[pieces.length - 1];
+
+    if (current.includes(".")) {
+      return;
+    }
+
+    if (
+      !current ||
+      /[+\-*/]$/.test(expression)
+    ) {
+
+      value = "0.";
+
+    }
+
+  }
+
+  /*
+    Operator
+  */
+
+  if (
+    ["+", "-", "*", "/"]
+      .includes(value)
+  ) {
+
+    if (
+      !expression &&
+      value !== "-"
+    ) {
+      return;
+    }
+
+    if (
+      /[+\-*/]$/.test(expression)
+    ) {
+
+      expression =
+        expression.slice(0,-1)
+        + value;
+
+      updateDisplay();
+
+      return;
+
+    }
+
+  }
+
+  expression += value;
+
+  displayStatus.textContent =
+    "INPUT";
+
+  updateDisplay();
+
+}
+
+/* =========================================================
+   CLEAR
+========================================================= */
+
+function clearCalculator() {
+
+  expression = "";
+
+  displayStatus.textContent =
+    "READY";
+
+  beep();
+
+  updateDisplay();
+
+}
+
+/* =========================================================
+   BACKSPACE
+========================================================= */
+
+function backspace() {
+
+  expression =
+    expression.slice(0,-1);
+
+  beep();
+
+  updateDisplay();
+
+}
+
+/* =========================================================
+   SIGN
+========================================================= */
+
+function toggleSign() {
+
+  if (!expression) {
+
+    expression = "-";
+
+  } else {
+
+    try {
+
+      const value =
+        calculate(expression);
+
+      expression =
+        String(-value);
+
+    } catch {
+
+      expression =
+        expression.startsWith("-")
+          ? expression.slice(1)
+          : "-" + expression;
+
+    }
+
+  }
+
+  updateDisplay();
+
+}
+
+/* =========================================================
+   PERCENT
+========================================================= */
+
+function percentage() {
+
+  if (!expression) {
+    return;
+  }
+
+  try {
+
+    const value =
+      calculate(expression);
+
+    expression =
+      String(value / 100);
+
+    displayStatus.textContent =
+      "PERCENT";
+
+    updateDisplay();
+
+  } catch {
+
+    toast(
+      "Persentase tidak valid"
+    );
+
+  }
+
+}
+
+/* =========================================================
+   EQUALS
+========================================================= */
+
+function equals() {
+
+  if (!expression) {
+    return;
+  }
+
+  const original =
+    expression;
+
+  try {
+
+    const result =
+      calculate(expression);
+
+    const formatted =
+      formatNumber(result);
+
+    lastAnswer =
+      result;
+
+    historyData.unshift({
+
+      expression:
+        original,
+
+      result:
+        formatted,
+
+      raw:
+        result,
+
+      time:
+        new Date().toLocaleTimeString(
+          "id-ID",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        )
+
+    });
+
+    /*
+      Maksimum 30 history
+    */
+
+    historyData =
+      historyData.slice(0,30);
+
+    operations++;
+
+    expression =
+      String(result);
+
+    displayStatus.textContent =
+      "RESULT";
+
+    save();
+
+    renderHistory();
+
+    updateDisplay();
+
+    beep();
+
+  } catch {
+
+    screen.textContent =
+      "ERROR";
+
+    displayStatus.textContent =
+      "ERROR";
+
+    toast(
+      "Ekspresi matematika tidak valid"
+    );
+
+    setTimeout(
+      updateDisplay,
+      900
+    );
+
+  }
+
+}
+
+/* =========================================================
+   MEMORY
+========================================================= */
+
+function memoryClear() {
+
+  memory = 0;
+
+  save();
+
+  updateDisplay();
+
+  toast(
+    "Memory cleared"
+  );
+
+}
+
+function memoryRecall() {
+
+  expression +=
+    String(memory);
+
+  updateDisplay();
+
+  toast(
+    "Memory recalled"
+  );
+
+}
+
+function memoryAdd() {
+
+  try {
+
+    memory +=
+      calculate(
+        expression || "0"
+      );
+
+    save();
+
+    updateDisplay();
+
+    toast(
+      "M+ berhasil"
+    );
+
+  } catch {
+
+    toast(
+      "Tidak ada angka valid"
+    );
+
+  }
+
+}
+
+function memorySubtract() {
+
+  try {
+
+    memory -=
+      calculate(
+        expression || "0"
+      );
+
+    save();
+
+    updateDisplay();
+
+    toast(
+      "M− berhasil"
+    );
+
+  } catch {
+
+    toast(
+      "Tidak ada angka valid"
+    );
+
+  }
+
+}
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+function save() {
+
+  localStorage.setItem(
+    "calculax_memory",
+    memory
+  );
+
+  localStorage.setItem(
+    "calculax_history",
+    JSON.stringify(
+      historyData
+    )
+  );
+
+  localStorage.setItem(
+    "calculax_operations",
+    operations
+  );
+
+}
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+  return value
+    .replace(
+      /[&<>"']/g,
+      char => {
+
+        const map = {
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+
+        };
+
+        return map[char];
+
+      }
+    );
+
+}
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function renderHistory() {
+
+  if (!historyData.length) {
+
+    historyBox.innerHTML = `
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          ⌁
+        </div>
+
+        <strong>
+          No calculations yet
+        </strong>
+
+        <span>
+          Hasil perhitungan akan muncul
+          di sini.
+        </span>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  historyBox.innerHTML =
+    historyData.map(
+      (item,index) => `
+
+        <div
+          class="history-item"
+          data-index="${index}"
+        >
+
+          <span
+            class="history-expression"
+          >
+            ${escapeHTML(
+              item.expression
+            )}
+          </span>
+
+          <span
+            class="history-result"
+          >
+            = ${escapeHTML(
+              item.result
+            )}
+          </span>
+
+          <span
+            class="history-time"
+          >
+            ${item.time}
+          </span>
+
+        </div>
+
+      `
+    ).join("");
+
+  document
+    .querySelectorAll(
+      ".history-item"
+    )
+    .forEach(item => {
+
+      item.addEventListener(
+        "click",
+        () => {
+
+          const data =
+            historyData[
+              Number(
+                item.dataset.index
+              )
+            ];
+
+          expression =
+            String(data.raw);
+
+          updateDisplay();
+
+          toast(
+            "Hasil dimasukkan"
+          );
+
+        }
+      );
+
+    });
+
+}
+
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
+
+document
+  .querySelectorAll("[data-input]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        addInput(
+          button.dataset.input
+        );
+
+      }
+    );
+
+  });
+
+document
+  .querySelectorAll("[data-action]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const action =
+          button.dataset.action;
+
+        if (
+          action === "clear"
+        ) {
+          clearCalculator();
+        }
+
+        if (
+          action === "backspace"
+        ) {
+          backspace();
+        }
+
+        if (
+          action === "percent"
+        ) {
+          percentage();
+        }
+
+        if (
+          action === "sign"
+        ) {
+          toggleSign();
+        }
+
+        if (
+          action === "equals"
+        ) {
+          equals();
+        }
+
+      }
+    );
+
+  });
+
+/* =========================================================
+   MEMORY EVENTS
+========================================================= */
+
+document
+  .querySelectorAll("[data-memory]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const action =
+          button.dataset.memory;
+
+        if (
+          action === "clear"
+        ) {
+          memoryClear();
+        }
+
+        if (
+          action === "recall"
+        ) {
+          memoryRecall();
+        }
+
+        if (
+          action === "add"
+        ) {
+          memoryAdd();
+        }
+
+        if (
+          action === "subtract"
+        ) {
+          memorySubtract();
+        }
+
+      }
+    );
+
+  });
+
+/* =========================================================
+   MODE
+========================================================= */
+
+document
+  .querySelectorAll("[data-mode]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document
+          .querySelectorAll(
+            "[data-mode]"
+          )
+          .forEach(
+            btn =>
+              btn.classList.remove(
+                "active"
+              )
+          );
+
+        button.classList.add(
+          "active"
+        );
+
+        if (
+          button.dataset.mode ===
+          "scientific"
+        ) {
+
+          scientific.classList.add(
+            "show"
+          );
+
+        } else {
+
+          scientific.classList.remove(
+            "show"
+          );
+
+        }
+
+      }
+    );
+
+  });
+
+/* =========================================================
+   ANGLE
+========================================================= */
+
+angleButton.addEventListener(
+  "click",
+  () => {
+
+    angleMode =
+      angleMode === "DEG"
+        ? "RAD"
+        : "DEG";
+
+    updateDisplay();
+
+    toast(
+      "Angle: " + angleMode
+    );
+
+  }
+);
+
+/* =========================================================
+   HISTORY CLEAR
+========================================================= */
+
+document
+  .getElementById("clearHistory")
+  .addEventListener(
+    "click",
+    () => {
+
+      historyData = [];
+
+      save();
+
+      renderHistory();
+
+      updateDisplay();
+
+      toast(
+        "History dibersihkan"
+      );
+
+    }
+  );
+
+/* =========================================================
+   QUICK ACTION
+========================================================= */
+
+document
+  .querySelectorAll("[data-quick]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const action =
+          button.dataset.quick;
+
+        if (
+          action === "pi"
+        ) {
+
+          addInput("pi");
+
+        }
+
+        if (
+          action === "sqrt"
+        ) {
+
+          addInput("sqrt(");
+
+        }
+
+        if (
+          action === "answer"
+        ) {
+
+          expression +=
+            String(lastAnswer);
+
+          updateDisplay();
+
+        }
+
+        if (
+          action === "reset"
+        ) {
+
+          clearCalculator();
+
+        }
+
+      }
+    );
+
+  });
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    const key =
+      event.key;
+
+    if (
+      key >= "0" &&
+      key <= "9"
+    ) {
+
+      addInput(key);
+
+      return;
+
+    }
+
+    if (
+      ["+","-","*","/"]
+        .includes(key)
+    ) {
+
+      addInput(key);
+
+      return;
+
+    }
+
+    if (
+      key === "."
+    ) {
+
+      addInput(".");
+
+      return;
+
+    }
+
+    if (
+      key === "Enter" ||
+      key === "="
+    ) {
+
+      event.preventDefault();
+
+      equals();
+
+      return;
+
+    }
+
+    if (
+      key === "Backspace"
+    ) {
+
+      backspace();
+
+      return;
+
+    }
+
+    if (
+      key === "Escape"
+    ) {
+
+      clearCalculator();
+
+      return;
+
+    }
+
+    if (
+      key === "%"
+    ) {
+
+      percentage();
+
+      return;
+
+    }
+
+    if (
+      key.toLowerCase() === "s"
+    ) {
+
+      document
+        .querySelector(
+          '[data-mode="scientific"]'
+        )
+        .click();
+
+    }
+
+  }
+);
+
+/* =========================================================
+   THEME
+========================================================= */
+
+document
+  .getElementById("themeButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      document.body.classList.toggle(
+        "light"
+      );
+
+      /*
+        Light mode sederhana
+      */
+
+      if (
+        document.body.classList.contains(
+          "light"
+        )
+      ) {
+
+        document.documentElement
+          .style.setProperty(
+            "--bg",
+            "#edf2fa"
+          );
+
+        document.documentElement
+          .style.setProperty(
+            "--panel",
+            "rgba(255,255,255,.82)"
+          );
+
+        toast(
+          "Light mode"
+        );
+
+      } else {
+
+        document.documentElement
+          .style.setProperty(
+            "--bg",
+            "#050711"
+          );
+
+        document.documentElement
+          .style.setProperty(
+            "--panel",
+            "rgba(15,20,40,.78)"
+          );
+
+        toast(
+          "Dark mode"
+        );
+
+      }
+
+    }
+  );
+
+/* =========================================================
+   SOUND
+========================================================= */
+
+document
+  .getElementById("soundButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      soundEnabled =
+        !soundEnabled;
+
+      localStorage.setItem(
+        "calculax_sound",
+        soundEnabled
+          ? "on"
+          : "off"
+      );
+
+      toast(
+        soundEnabled
+          ? "Sound ON"
+          : "Sound OFF"
+      );
+
+    }
+  );
+
+/* =========================================================
+   SETTINGS MODAL
+========================================================= */
+
+const dialog =
+  document.getElementById(
+    "settingsDialog"
+  );
+
+document
+  .getElementById("settingsButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      dialog.showModal();
+
+    }
+  );
+
+document
+  .getElementById("closeModal")
+  .addEventListener(
+    "click",
+    () => {
+
+      dialog.close();
+
+    }
+  );
+
+/* =========================================================
+   ACCENT COLORS
+========================================================= */
+
+const colors = {
+
+  cyan: {
+    main: "#55e7ff",
+    second: "#8a63ff"
+  },
+
+  purple: {
+    main: "#a78bfa",
+    second: "#6366f1"
+  },
+
+  pink: {
+    main: "#ff65c3",
+    second: "#8a63ff"
+  },
+
+  green: {
+    main: "#43f2a1",
+    second: "#31a0a5"
+  }
+
+};
+
+document
+  .querySelectorAll("[data-color]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const color =
+          colors[
+            button.dataset.color
+          ];
+
+        document.documentElement
+          .style.setProperty(
+            "--cyan",
+            color.main
+          );
+
+        document.documentElement
+          .style.setProperty(
+            "--purple",
+            color.second
+          );
+
+        document
+          .querySelectorAll(
+            ".color"
+          )
+          .forEach(
+            x =>
+              x.classList.remove(
+                "active"
+              )
+          );
+
+        button.classList.add(
+          "active"
+        );
+
+        toast(
+          "Accent changed"
+        );
+
+      }
+    );
+
+  });
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+renderHistory();
+
+updateDisplay();
+
+</script>
+
+</body>
+</html>
