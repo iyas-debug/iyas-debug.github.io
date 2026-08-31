@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>STARFALL // Space Defender</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030615;color:#fff;font-family:Arial,Helvetica,sans-serif}
+body{user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:18px;pointer-events:none;z-index:5}
+.panel{background:rgba(5,10,30,.72);border:1px solid rgba(112,190,255,.28);box-shadow:0 0 24px rgba(0,150,255,.08);backdrop-filter:blur(8px);border-radius:14px;padding:10px 14px}
+.stat{display:inline-flex;gap:7px;margin-right:14px;font-weight:700;font-size:14px}.value{color:#70d9ff}
+#center{position:fixed;inset:0;display:grid;place-items:center;z-index:10;pointer-events:none}
+.screen{pointer-events:auto;text-align:center;width:min(620px,92vw);padding:34px;border-radius:24px;background:linear-gradient(180deg,rgba(7,14,42,.94),rgba(3,7,23,.96));border:1px solid rgba(101,203,255,.32);box-shadow:0 0 80px rgba(0,120,255,.16)}
+.hidden{display:none!important}
+h1{font-size:clamp(38px,8vw,76px);letter-spacing:8px;margin:0 0 8px;color:#c9f5ff;text-shadow:0 0 22px #29baff}
+.sub{color:#86a9c5;margin:0 0 25px}.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+button{border:0;border-radius:12px;padding:13px 22px;background:#49c7ff;color:#03111c;font-weight:800;cursor:pointer;box-shadow:0 0 22px rgba(73,199,255,.22)}
+button:hover{filter:brightness(1.12);transform:translateY(-1px)}button.alt{background:#182744;color:#bfeaff;border:1px solid #315477}
+#bossBar{position:fixed;top:76px;left:50%;transform:translateX(-50%);width:min(540px,70vw);z-index:5;display:none}
+.bar{height:12px;background:#160b1b;border:1px solid #8e3767;border-radius:20px;overflow:hidden}.fill{height:100%;width:100%;background:linear-gradient(90deg,#ff3f71,#ffae4a);box-shadow:0 0 14px #ff4f75}
+#message{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:34px;font-weight:900;letter-spacing:4px;text-shadow:0 0 20px #5ee8ff;z-index:7;opacity:0;pointer-events:none}
+#touch{position:fixed;left:0;right:0;bottom:15px;display:flex;justify-content:space-between;padding:0 20px;z-index:8;pointer-events:none}
+.touchGroup{display:flex;gap:12px}.touchBtn{pointer-events:auto;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:rgba(20,42,73,.7);border:1px solid #4e91b9;color:#fff;font-size:25px}
+@media(min-width:800px){#touch{display:none}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hud">
+  <div class="panel">
+    <span class="stat">SCORE <span id="score" class="value">0</span></span>
+    <span class="stat">LEVEL <span id="level" class="value">1</span></span>
+    <span class="stat">HIGH <span id="high" class="value">0</span></span>
+  </div>
+  <div class="panel">
+    <span class="stat">❤️ <span id="lives" class="value">3</span></span>
+    <span class="stat">⚡ <span id="energy" class="value">100</span></span>
+  </div>
+</div>
+<div id="bossBar"><div style="text-align:center;font-size:12px;margin-bottom:5px;color:#ff9bc3">DREADNOUGHT</div><div class="bar"><div id="bossFill" class="fill"></div></div></div>
+<div id="message"></div>
+<div id="center">
+  <div id="menu" class="screen">
+    <h1>STARFALL</h1>
+    <p class="sub">SPACE DEFENDER // SURVIVE THE VOID</p>
+    <div class="row">
+      <button id="start">START MISSION</button>
+      <button id="how" class="alt">CONTROLS</button>
+    </div>
+    <p id="help" class="sub hidden" style="margin-top:20px">A/D atau ←/→ bergerak • SPACE menembak • P pause • R restart</p>
+  </div>
+  <div id="gameover" class="screen hidden">
+    <h1 style="font-size:46px">MISSION FAILED</h1>
+    <p class="sub">Sistem pertahanan kapal telah runtuh.</p>
+    <h2>FINAL SCORE: <span id="finalScore">0</span></h2>
+    <div class="row"><button id="restart">PLAY AGAIN</button></div>
+  </div>
+  <div id="pause" class="screen hidden">
+    <h1 style="font-size:48px">PAUSED</h1><p class="sub">Tekan P untuk melanjutkan</p>
+  </div>
+</div>
+<div id="touch">
+ <div class="touchGroup"><div class="touchBtn" id="left">◀</div><div class="touchBtn" id="right">▶</div></div>
+ <div class="touchGroup"><div class="touchBtn" id="fire">✦</div></div>
+</div>
+
+<script>
+const c=document.getElementById('game'),x=c.getContext('2d');
+let W,H,dpr=1,last=0,run=false,paused=false,score=0,level=1,lives=3,energy=100,spawn=0,stars=[],bullets=[],enemies=[],particles=[],powerups=[],enemyBullets=[],boss=null,shake=0;
+let keys={left:false,right:false,fire:false};
+let high=Number(localStorage.starfallHigh||0);
+document.getElementById('high').textContent=high;
+const player={x:0,y:0,w:42,h:52,speed:430,cool:0,inv:0,rapid:0,shield:0};
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);player.y=H-92;player.x=Math.min(player.x||W/2,W-35);stars=Array.from({length:Math.max(100,Math.floor(W*H/10000))},()=>({x:Math.random()*W,y:Math.random()*H,z:Math.random()*3+1,s:Math.random()*70+25}))}
+addEventListener('resize',resize);resize();
+
+function reset(){score=0;level=1;lives=3;energy=100;spawn=0;bullets=[];enemies=[];particles=[];powerups=[];enemyBullets=[];boss=null;player.x=W/2;player.inv=0;player.rapid=0;player.shield=0;document.getElementById('bossBar').style.display='none';ui()}
+function ui(){scoreEl.textContent=score;levelEl.textContent=level;livesEl.textContent=lives;energyEl.textContent=Math.floor(energy);highEl.textContent=high}
+const scoreEl=document.getElementById('score'),levelEl=document.getElementById('level'),livesEl=document.getElementById('lives'),energyEl=document.getElementById('energy'),highEl=document.getElementById('high');
+function start(){reset();run=true;paused=false;document.getElementById('menu').classList.add('hidden');document.getElementById('gameover').classList.add('hidden');document.getElementById('pause').classList.add('hidden');last=performance.now();requestAnimationFrame(loop)}
+function end(){run=false;high=Math.max(high,score);localStorage.starfallHigh=high;document.getElementById('finalScore').textContent=score;document.getElementById('gameover').classList.remove('hidden');ui()}
+document.getElementById('start').onclick=start;document.getElementById('restart').onclick=start;
+document.getElementById('how').onclick=()=>document.getElementById('help').classList.toggle('hidden');
+
+addEventListener('keydown',e=>{if(e.code==='ArrowLeft'||e.code==='KeyA')keys.left=true;if(e.code==='ArrowRight'||e.code==='KeyD')keys.right=true;if(e.code==='Space'){keys.fire=true;e.preventDefault()}if(e.code==='KeyP'&&run){paused=!paused;document.getElementById('pause').classList.toggle('hidden',!paused)}if(e.code==='KeyR'&&!run)start()});
+addEventListener('keyup',e=>{if(e.code==='ArrowLeft'||e.code==='KeyA')keys.left=false;if(e.code==='ArrowRight'||e.code==='KeyD')keys.right=false;if(e.code==='Space')keys.fire=false});
+function hold(id,k){let b=document.getElementById(id);b.onpointerdown=e=>{e.preventDefault();keys[k]=true};b.onpointerup=b.onpointercancel=b.onpointerleave=()=>keys[k]=false}
+hold('left','left');hold('right','right');hold('fire','fire');
+
+function starfield(dt){x.fillStyle='#020511';x.fillRect(0,0,W,H);for(const s of stars){s.y+=s.s*dt*(1+level*.08);if(s.y>H){s.y=-3;s.x=Math.random()*W}x.globalAlpha=.25+s.z/4;x.fillStyle='#bdeaff';x.fillRect(s.x,s.y,s.z,s.z*2)}x.globalAlpha=1}
+function rectHit(a,b){return Math.abs(a.x-b.x)<(a.w+b.w)/2&&Math.abs(a.y-b.y)<(a.h+b.h)/2}
+function burst(px,py,col,n=16){for(let i=0;i<n;i++){let a=Math.random()*Math.PI*2,v=Math.random()*260+40;particles.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:.45+Math.random()*.7,r:Math.random()*3+1,col})}}
+function shoot(){if(player.cool>0||energy<2)return;player.cool=player.rapid>0?.09:.19;energy-=2;let count=player.rapid>0?2:1;for(let i=0;i<count;i++)bullets.push({x:player.x+(i?10:-10),y:player.y-29,v:780,w:5,h:18,damage:1})}
+function spawnEnemy(){let type=Math.random(),e={x:35+Math.random()*(W-70),y:-50,w:38,h:38,hp:1,max:1,v:70+level*9+Math.random()*80,t:type<.15?'zig':type>.88?'tank':'normal',phase:Math.random()*6};if(e.t==='tank'){e.w=54;e.h=52;e.hp=e.max=3+Math.floor(level/4);e.v*=.6}enemies.push(e)}
+function makeBoss(){boss={x:W/2,y:-100,w:150,h:88,hp:55+level*15,max:55+level*15,vx:150,shoot:1};document.getElementById('bossBar').style.display='block';showText('⚠ BOSS INCOMING ⚠')}
+function drop(e){if(Math.random()<.12)powerups.push({x:e.x,y:e.y,type:Math.random()<.5?'rapid':'shield',vy:110,r:12})}
+function damagePlayer(){if(player.inv>0||player.shield>0){if(player.shield>0)player.shield--;return}lives--;player.inv=2;shake=14;burst(player.x,player.y,'#7de8ff',28);if(lives<=0)end();ui()}
+function update(dt){
+ if(paused)return;
+ player.y=H-92;if(keys.left)player.x-=player.speed*dt;if(keys.right)player.x+=player.speed*dt;player.x=Math.max(28,Math.min(W-28,player.x));
+ player.cool=Math.max(0,player.cool-dt);player.inv=Math.max(0,player.inv-dt);player.rapid=Math.max(0,player.rapid-dt);energy=Math.min(100,energy+8*dt);if(keys.fire)shoot();
+ spawn-=dt;if(spawn<=0&&!boss){spawnEnemy();spawn=Math.max(.25,.8-level*.025)}
+ if(score>0&&score%900<20&&level<12){level++;showText('LEVEL '+level);ui()}
+ if(score>0&&score%2500<15&&!boss)makeBoss();
+ for(let b of bullets)b.y-=b.v*dt;bullets=bullets.filter(b=>b.y>-30);
+ for(let e of enemies){e.y+=e.v*dt;if(e.t==='zig')e.x+=Math.sin(e.y*.012+e.phase)*100*dt}
+ for(let b of enemyBullets){b.x+=b.vx*dt;b.y+=b.vy*dt}
+ enemyBullets=enemyBullets.filter(b=>b.y<H+40&&b.x>-40&&b.x<W+40);
+ for(let p of powerups)p.y+=p.vy*dt;powerups=powerups.filter(p=>p.y<H+30);
+ for(let p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98;p.life-=dt}particles=particles.filter(p=>p.life>0);
+ for(let b of bullets){for(let e of enemies){if(!b.dead&&!e.dead&&rectHit(b,e)){b.dead=true;e.hp-=b.damage;burst(b.x,b.y,'#66dcff',5);if(e.hp<=0){e.dead=true;score+=e.t==='tank'?45:20;burst(e.x,e.y,e.t==='tank'?'#ff9c54':'#74e7ff',25);drop(e)}}}}
+ bullets=bullets.filter(b=>!b.dead);
+ for(let e of enemies){if(!e.dead&&((e.y>H+30)||rectHit(e,player))){e.dead=true;if(e.y>H)damagePlayer();else damagePlayer()}}
+ enemies=enemies.filter(e=>!e.dead&&e.y<H+70);
+ for(let b of enemyBullets)if(rectHit(b,player)){b.dead=true;damagePlayer()}enemyBullets=enemyBullets.filter(b=>!b.dead);
+ for(let p of powerups)if(rectHit({x:p.x,y:p.y,w:24,h:24},player)){p.dead=true;if(p.type==='rapid')player.rapid=8;else player.shield=3;showText(p.type==='rapid'?'RAPID FIRE!':'SHIELD!')}
+ powerups=powerups.filter(p=>!p.dead);
+ if(boss){
+   if(boss.y<110)boss.y+=100*dt;else{boss.x+=boss.vx*dt;if(boss.x>W-90||boss.x<90)boss.vx*=-1;boss.shoot-=dt;if(boss.shoot<=0){boss.shoot=.65;for(let i=-1;i<=1;i++)enemyBullets.push({x:boss.x+i*35,y:boss.y+35,vx:i*95,vy:260+level*6,w:12,h:12})}}
+   for(let b of bullets)if(!b.dead&&rectHit(b,boss)){b.dead=true;boss.hp--;burst(b.x,b.y,'#ffcc77',4)}
+   if(boss.hp<=0){score+=1000;burst(boss.x,boss.y,'#ff6f8e',100);boss=null;document.getElementById('bossBar').style.display='none';showText('BOSS DESTROYED +1000');level++;ui()}
+   else document.getElementById('bossFill').style.width=Math.max(0,boss.hp/boss.max*100)+'%';
+ }
+ ui();
+}
+function drawShip(){if(player.inv>0&&Math.floor(player.inv*12)%2===0)return;x.save();x.translate(player.x,player.y);x.shadowBlur=20;x.shadowColor='#38d8ff';x.fillStyle='#75e8ff';x.beginPath();x.moveTo(0,-29);x.lineTo(24,24);x.lineTo(8,18);x.lineTo(0,28);x.lineTo(-8,18);x.lineTo(-24,24);x.closePath();x.fill();x.fillStyle='#0a2845';x.beginPath();x.moveTo(0,-17);x.lineTo(8,8);x.lineTo(-8,8);x.closePath();x.fill();x.fillStyle='#ffcf5a';x.fillRect(-10,24,7,12);x.fillRect(3,24,7,12);if(player.shield>0){x.strokeStyle='#73f5ff';x.lineWidth=3;x.globalAlpha=.45;x.beginPath();x.arc(0,0,39,0,Math.PI*2);x.stroke()}x.restore()}
+function draw(){starfield(0.016);for(let b of bullets){x.fillStyle='#7df4ff';x.shadowBlur=15;x.shadowColor='#2edbff';x.fillRect(b.x-2,b.y,b.w,b.h);x.shadowBlur=0}for(let e of enemies){x.save();x.translate(e.x,e.y);x.rotate(Math.sin(e.y*.01)*.15);x.fillStyle=e.t==='tank'?'#ff6b66':'#c54cff';x.shadowBlur=18;x.shadowColor=x.fillStyle;x.beginPath();x.moveTo(0,25);x.lineTo(-25,-15);x.lineTo(-9,-8);x.lineTo(0,-25);x.lineTo(9,-8);x.lineTo(25,-15);x.closePath();x.fill();x.fillStyle='#17142e';x.fillRect(-8,-5,16,9);x.restore();if(e.t==='tank'){x.fillStyle='#321';x.fillRect(e.x-25,e.y-34,50,4);x.fillStyle='#ff7a62';x.fillRect(e.x-25,e.y-34,50*(e.hp/e.max),4)}}for(let b of enemyBullets){x.fillStyle='#ff667d';x.shadowBlur=12;x.shadowColor='#ff3355';x.beginPath();x.arc(b.x,b.y,6,0,7);x.fill();x.shadowBlur=0}for(let p of powerups){x.strokeStyle=p.type==='rapid'?'#ffe66d':'#75f7ff';x.lineWidth=3;x.beginPath();x.arc(p.x,p.y,p.r+Math.sin(performance.now()*.006)*3,0,7);x.stroke();x.fillStyle='#fff';x.font='bold 12px Arial';x.textAlign='center';x.fillText(p.type==='rapid'?'⚡':'◆',p.x,p.y+4)}for(let p of particles){x.globalAlpha=Math.max(0,p.life);x.fillStyle=p.col;x.fillRect(p.x,p.y,p.r,p.r)}x.globalAlpha=1;if(boss){x.save();x.translate(boss.x,boss.y);x.fillStyle='#b83267';x.shadowBlur=30;x.shadowColor='#ff315f';x.beginPath();x.moveTo(0,-45);x.lineTo(75,-15);x.lineTo(54,38);x.lineTo(20,26);x.lineTo(0,48);x.lineTo(-20,26);x.lineTo(-54,38);x.lineTo(-75,-15);x.closePath();x.fill();x.fillStyle='#26142d';x.fillRect(-30,-10,60,20);x.fillStyle='#ffcc61';x.fillRect(-10,-4,20,8);x.restore()}drawShip();if(shake>0){shake*=.88}}
+function loop(t){if(!run)return;let dt=Math.min(.033,(t-last)/1000);last=t;update(dt);draw();requestAnimationFrame(loop)}
+function showText(s){let m=document.getElementById('message');m.textContent=s;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,850)}
+</script>
+</body>
+</html>
